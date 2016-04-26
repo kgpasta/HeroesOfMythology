@@ -29,8 +29,9 @@ namespace Assets.Scripts
         {
             foreach(GameObject unit in Units)
             {
-                if(unit.GetComponent<Movement>().CurrentTile == tile)
-                {
+                Movement movement = unit.GetComponent<Movement>();
+                if(movement.CurrentTile == tile)
+                { 
                     return unit;
                 }
             }

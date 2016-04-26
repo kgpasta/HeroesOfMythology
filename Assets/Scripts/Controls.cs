@@ -22,22 +22,11 @@ public class Controls : MonoBehaviour
 
     }
 
-    public void SelectUnit(Coordinate position)
+    public void SelectUnit(GameObject unit, Coordinate position)
     {
-        if(HighlightedTiles != null)
-        {
-            foreach (GameTile rangeTile in HighlightedTiles)
-            {
-                rangeTile.Highlight();
-            }
-        }
-
-
-        HighlightedTiles = Board.GetRange(position, 4);
-        foreach (GameTile rangeTile in HighlightedTiles)
-        {
-            rangeTile.Highlight();
-        }
+        UnitStats stats = unit.GetComponent<UnitStats>();
+        HighlightedTiles = Board.GetRange(position, stats.Movement);
+        BoardOverlay.HighlightTiles(HighlightedTiles);
     }
 
     public bool MoveUnit(GameObject unit, Coordinate position)
@@ -51,13 +40,28 @@ public class Controls : MonoBehaviour
             //Objectively move unit
             unit.GetComponent<Movement>().CurrentTile = tile;
 
-            foreach (GameTile rangeTile in HighlightedTiles)
-            {
-                rangeTile.Highlight();
-            }
-            HighlightedTiles = null;
+            UnitStats stats = unit.GetComponent<UnitStats>();
+
+            HighlightedTiles = Board.GetRange(position,stats.AttackRange);
+            BoardOverlay.HighlightTiles(HighlightedTiles);
+
+            unit.GetComponent<Movement>().HasMovement = false;
 
             return true;
+        }
+        return false;
+    }
+
+    public bool ValidTargetExists()
+    {
+        Player Opponent = Utility.GetOpponent().GetComponent<Player>();
+        foreach (GameTile highlightedTile in HighlightedTiles)
+        {
+            GameObject enemy = Opponent.GetUnitLocation(highlightedTile.ToCoordinate());
+            if (enemy != null)
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -75,6 +79,15 @@ public class Controls : MonoBehaviour
             death.SetActive(false);
         }
 
+        HighlightedTiles = null;
+        BoardOverlay.HighlightTiles(HighlightedTiles);
+
         return true;
+    }
+
+    public void ResetHighlightedTiles()
+    {
+        HighlightedTiles = null;
+        BoardOverlay.HighlightTiles(HighlightedTiles);
     }
 }

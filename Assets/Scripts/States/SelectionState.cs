@@ -20,7 +20,7 @@ namespace Assets.Scripts
 
             SelectedUnit = Player.GetNextAvailableUnit();
             Coordinate coord = SelectedUnit.GetComponent<Movement>().CurrentTile.ToCoordinate();
-            ControlFunctions.SelectUnit(coord);
+            ControlFunctions.SelectUnit(SelectedUnit, coord);
         }
 
         public override void Exit()
@@ -48,8 +48,8 @@ namespace Assets.Scripts
                 }
                 else
                 {
-                    ControlFunctions.SelectUnit(position);
                     SelectedUnit = selected;
+                    ControlFunctions.SelectUnit(SelectedUnit, position);
                 }
                 
             }

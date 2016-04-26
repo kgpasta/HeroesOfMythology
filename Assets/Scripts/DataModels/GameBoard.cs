@@ -15,6 +15,11 @@ namespace Assets.Scripts
             Board = new Dictionary<Coordinate, GameTile>();
         }
 
+        public List<GameTile> GetAllTiles()
+        {
+            return Board.Values.ToList();
+        }
+
         public GameTile GetTile(Coordinate coord)
         {
             GameTile tile;
@@ -48,7 +53,6 @@ namespace Assets.Scripts
     public class GameTile
     {
         public GameObject TileObject;
-        public bool isHighlighted = false;
 
         public GameTile(GameObject tileObject)
         {
@@ -60,21 +64,6 @@ namespace Assets.Scripts
             int x = Utility.ConvertCoordinate(TileObject.transform.position.x);
             int y = Utility.ConvertCoordinate(TileObject.transform.position.y);
             return new Coordinate(x, y);
-        }
-
-        public void Highlight()
-        {
-            if (!isHighlighted)
-            {
-                TileObject.GetComponent<SpriteRenderer>().color = Color.red;
-                isHighlighted = true;
-
-            }
-            else
-            {
-                TileObject.GetComponent<SpriteRenderer>().color = Color.white;
-                isHighlighted = false;
-            }
         }
     }
 

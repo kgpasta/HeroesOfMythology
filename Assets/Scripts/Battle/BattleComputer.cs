@@ -20,14 +20,30 @@ namespace Assets.Scripts.Battle
             UnitStats attackerStats = attacker.GetComponent<UnitStats>();
             UnitStats defenderStats = defender.GetComponent<UnitStats>();
 
-            int attackerDamage = attackerStats.Atk - defenderStats.Def;
-            int defenderDamage = defenderStats.Atk - attackerStats.Def;
+            int attackerHit = (int) (UnityEngine.Random.value * 100);
+            int defenderHit = (int) (UnityEngine.Random.value * 100);
 
-            Debug.Log(attacker.name + " hit " + defender.name + " for " + attackerDamage + " damage!");
-            Debug.Log(defender.name + " hit " + attacker.name + " for " + defenderDamage + " damage!");
+            Debug.Log(attackerStats.name + " rolled a " + attackerHit + ", hit % was " + attackerStats.Accuracy);
+            if(attackerStats.Accuracy >= attackerHit)
+            {
+                int attackerDamage = CalculateDamage(attackerStats, defenderStats);
+                Debug.Log(attacker.name + " hit " + defender.name + " for " + attackerDamage + " damage!");
+            }
+            else
+            {
+                Debug.Log(attacker.name + " missed!");
+            }
 
-            attackerStats.HP -= defenderDamage;
-            defenderStats.HP -= attackerDamage;
+            Debug.Log(defenderStats.name + " rolled a " + defenderHit + ", hit % was " + defenderStats.Accuracy);
+            if (defenderStats.Accuracy >= defenderHit)
+            {
+                int defenderDamage = CalculateDamage(defenderStats, attackerStats);
+                Debug.Log(defender.name + " hit " + attacker.name + " for " + defenderDamage + " damage!");
+            }
+            else
+            {
+                Debug.Log(defender.name + " missed!");
+            }
 
             if(attackerStats.HP <= 0 && defenderStats.HP >= 0)
             {
@@ -40,10 +56,23 @@ namespace Assets.Scripts.Battle
             return BattleResult.Draw;
         }
 
+        private static int CalculateDamage(UnitStats attackerStats, UnitStats defenderStats)
+        {
+            int attackerDamage = attackerStats.Attack - defenderStats.Defense;
+            int attackerCritical = (int)(UnityEngine.Random.value * 100);
+
+            if (attackerStats.Critical >= attackerCritical)
+            {
+                attackerDamage = attackerDamage * 2;
+                Debug.Log("Critical Hit!");
+            }
+
+            defenderStats.HP -= attackerDamage;
+            return attackerDamage;
+        }
+
         public static GameObject ProcessBattleResult(GameObject attacker, GameObject defender, BattleResult result)
         {
-            attacker.GetComponent<SpriteRenderer>().color = Color.gray;
-            attacker.GetComponent<Movement>().HasMovement = false;
             if(result == BattleResult.Win)
             {
                 defender.GetComponentInParent<Player>().SendToGraveyard(defender);

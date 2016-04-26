@@ -12,11 +12,13 @@ public class BoardGenerator : MonoBehaviour {
     public GameObject EnemyPrefab;
     public GameBoard Board;
     Player Player;
+    Player Opponent;
 
     void Awake()
     {
         Board = new GameBoard();
         Player = Utility.GetPlayer().GetComponent<Player>();
+        Opponent = Utility.GetOpponent().GetComponent<Player>();
     }
 
 	// Use this for initialization
@@ -56,21 +58,26 @@ public class BoardGenerator : MonoBehaviour {
         Unit.transform.SetParent(Player.transform);
         UnitBaseStats baseStats = Resources.Load<UnitBaseStats>("Hero");
         Unit.GetComponent<UnitStats>().LoadBaseStats(baseStats);
-        PlaceUnit(Unit, new Coordinate(-1, 1));
+        PlaceUnit(Unit, new Coordinate(-1, 1), Player);
+
+        GameObject Unit2 = Instantiate(UnitPrefab);
+        Unit2.transform.SetParent(Player.transform);
+        Unit2.GetComponent<UnitStats>().LoadBaseStats(baseStats);
+        PlaceUnit(Unit2, new Coordinate(-3, 2), Player);
 
         GameObject Enemy = Instantiate(EnemyPrefab);
-        Enemy.transform.SetParent(Player.transform);
+        Enemy.transform.SetParent(Opponent.transform);
         baseStats = Resources.Load<UnitBaseStats>("Enemy");
         Enemy.GetComponent<UnitStats>().LoadBaseStats(baseStats);
-        PlaceUnit(Enemy, new Coordinate(2, 1));
+        PlaceUnit(Enemy, new Coordinate(2, 1), Opponent);
     }
 
-    void PlaceUnit(GameObject unit, Coordinate coord)
+    void PlaceUnit(GameObject unit, Coordinate coord, Player player)
     {
         GameTile tile = Board.GetTile(coord);
         unit.transform.position = new Vector3(Utility.ConvertFloat(coord.x), Utility.ConvertFloat(coord.y), 0f);
         unit.GetComponent<Movement>().CurrentTile = tile;
-        Player.UnitRoster.AddUnit(unit);
+        player.UnitRoster.AddUnit(unit);
     }
 
 }

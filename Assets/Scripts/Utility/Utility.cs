@@ -13,6 +13,11 @@ namespace Assets.Scripts
             return GameObject.Find("Player");
         }
 
+        public static GameObject GetOpponent()
+        {
+            return GameObject.Find("Opponent");
+        }
+
         public static GameBoard GetBoard()
         {
             return GameObject.Find("Board Manager").GetComponent<BoardGenerator>().Board;
